@@ -17,6 +17,6 @@ graph.add_edge("node", END)
 
 app = graph.compile()
 
-input: AgentState = {"user": "user1", "message": ""}
+input: AgentState = {"user": "Bob", "message": ""}
 output = app.invoke(input)
 print(output)
