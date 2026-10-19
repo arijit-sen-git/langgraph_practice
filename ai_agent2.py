@@ -30,7 +30,6 @@ def process(state: AgentState) -> AgentState:
 
     state["messages"].append(AIMessage(content=response.content))
     print("AI: {}".format(response.content))
-    print(state)
 
     return state
 
