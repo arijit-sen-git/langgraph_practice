@@ -28,7 +28,7 @@ llm = ChatOpenAI(
 def process(state: AgentState) -> AgentState:
     response = llm.invoke(state["messages"])
 
-    state["messages"].append(AIMessage(content=response.content))
+    state["messages"].append(AIMessage(content = response.content))
     print("AI: {}".format(response.content))
 
     return state
