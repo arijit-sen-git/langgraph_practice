@@ -1,7 +1,7 @@
 # Simple bot with history
 
 import os
-from typing import List, Union, TypedDict
+from typing import List, TypedDict
 
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
@@ -30,7 +30,6 @@ def process(state: AgentState) -> AgentState:
 
     state["messages"].append(AIMessage(content=response.content))
     print("AI: {}".format(response.content))
-    print("\n{}\n".format(state))
 
     return state
 
