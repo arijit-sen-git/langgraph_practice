@@ -1,10 +1,10 @@
-# Simple bot with history
+# simple bot with streaming output, no history
 
 import os
-from typing import List, TypedDict
+from typing import TypedDict
 
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from langgraph.graph import StateGraph, START, END
@@ -13,8 +13,7 @@ load_dotenv()
 
 
 class AgentState(TypedDict):
-    messages: List[HumanMessage | AIMessage]
-
+    messages: HumanMessage
 
 api_key = os.getenv("OPENAI_API_KEY")
 
@@ -26,12 +25,13 @@ llm = ChatOpenAI(
 
 
 def process(state: AgentState) -> AgentState:
-    response = llm.invoke(state["messages"])
+    for chunk in llm.stream(state["messages"].content):
+        if isinstance(chunk.content, str):
+            print(chunk.content, end = "", flush = True)
 
-    state["messages"].append(AIMessage(content = response.content))
-    print("AI: {}".format(response.content))
-
+    print()
     return state
+
 
 graph = StateGraph(AgentState)
 
@@ -41,7 +41,6 @@ graph.add_edge("process", END)
 
 agent = graph.compile()
 
-history: List[HumanMessage | AIMessage] = []
 
 while True:
     user_input = input("User: ")
@@ -49,7 +48,4 @@ while True:
     if user_input.strip().lower() == "exit":
         break
 
-    history.append(HumanMessage(content=user_input))
-    result = agent.invoke({"messages": history})
-
-    history = result["messages"]
+    agent.invoke({"messages": HumanMessage(content = user_input)})

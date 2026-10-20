@@ -15,6 +15,7 @@ load_dotenv()
 class AgentState(TypedDict):
     messages: HumanMessage
 
+
 api_key = os.getenv("OPENAI_API_KEY")
 
 llm = ChatOpenAI(
@@ -47,3 +48,18 @@ while True:
         break
 
     agent.invoke({"messages": HumanMessage(content = user_input)})
+
+
+"""
+
+When single HumanMessage is to be sent to LLM
+
+class AgentState(TypedDict):
+    messages: HumanMessage
+
+When multiple HumanMessage is to be sent to LLM
+
+class AgentState(TypedDict):
+    messages: List[HumanMessage]
+
+"""
